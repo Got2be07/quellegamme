@@ -1,6 +1,6 @@
-
-
+<link rel="stylesheet" href="style.css">
 <?php
+error_reporting(E_PARSE);
 
 // Gammes de Do
 $TGammeChromatique = array('C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B');
@@ -29,17 +29,40 @@ foreach ($TGammeChromatique as $k=>$note) {
 								);
 }
 
+printPiano($TGammeChromatique, true);
+
 if(!empty($_REQUEST['print_all_gammes'])) {
+	
 	// Affichage des gammes majeures :
-	foreach ($TGammeMajeure as $k => $v) {
-		print '<h3>Gamme Majeure de '.$k.' : </h3>';
-		printPiano($TGammeChromatique, $v);
+	foreach ($TGammeMajeure as $note => $TNotesGamme) {
+		$skip = false;
+		foreach ($_REQUEST['TSelectedNotes'] as $n) {
+
+			if(!in_array($n, $TNotesGamme)) {
+				$skip=true;
+				break;
+			}
+		}
+		if(empty($skip)) {
+			print '<h3>Gamme Majeure de '.$note.' : </h3>';
+			printPiano($TGammeChromatique, false, $TNotesGamme);
+		}
 	}
 
 	// Affichage des gammes mienures naturelles :
-	foreach ($TGammeMineure as $k => $v) {
-		print '<h3>Gamme Mineure Naturelle de '.$k.' : </h3>';
-		printPiano($TGammeChromatique, $v);
+	foreach ($TGammeMineure as $note => $TNotesGamme) {
+		$skip = false;
+		foreach ($_REQUEST['TSelectedNotes'] as $n) {
+
+			if(!in_array($n, $TNotesGamme)) {
+				$skip=true;
+				break;
+			}
+		}
+		if(empty($skip)) {
+			print '<h3>Gamme Mineure Naturelle de '.$note.' : </h3>';
+			printPiano($TGammeChromatique, false, $TNotesGamme);
+		}
 	}
 }
 
@@ -47,10 +70,19 @@ print '<br />';
 
 
 
-function printPiano($TGammeChromatique, $TGammeToCheck=array()) {
+function printPiano($TGammeChromatique, $get_form=false, $TGammeToCheck=array()) {
+	if($get_form) print '<form name="get_gammes" method="POST" action="quelle_gamme.php?print_all_gammes=1">';
 	print '<table >';
 
-	print '<tr >';
+	if($get_form) {
+		print '<tr >';
+		foreach ($TGammeChromatique as $k => $v) {
+			print '<td><input name="TSelectedNotes[]" value="'.$v.'" type="checkbox" '.(in_array($v, $_REQUEST['TSelectedNotes']) ? 'checked="checked"' : '').' id="'.$v.'" /></td>';
+		}
+		print '</tr>';
+	}
+	print '<tr>';
+
 	foreach ($TGammeChromatique as $k => $v) {
 		print '<td>'.$v.'</td>';
 	}
@@ -69,17 +101,13 @@ function printPiano($TGammeChromatique, $TGammeToCheck=array()) {
 			print '></td>';
 		}
 	}
-
+	
 	print '</table>';
+
+	if($get_form) {
+		print '<br /><input type="SUBMIT" value="Chercher gammes" />';
+		print '</form>';
+	}
 }
 
 ?>
-
-<style type="text/css">
-td {
-	width:30px;
-	height:30px;
-	border:1px solid;
-	text-align: center;
-}
-</script>
