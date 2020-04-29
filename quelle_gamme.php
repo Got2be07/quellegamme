@@ -44,7 +44,7 @@ if(!empty($_REQUEST['print_all_gammes'])) {
 			}
 		}
 		if(empty($skip)) {
-			print '<h3>Gamme Majeure de '.$note.' : </h3>';
+			print '<h3>Gamme Majeure de '.$note.' : (Accords disponibles : '.printAccordsDisponibles($TNotesGamme).')</h3>';
 			printPiano($TGammeChromatique, false, $TNotesGamme);
 		}
 	}
@@ -60,7 +60,7 @@ if(!empty($_REQUEST['print_all_gammes'])) {
 			}
 		}
 		if(empty($skip)) {
-			print '<h3>Gamme Mineure Naturelle de '.$note.' : </h3>';
+			print '<h3>Gamme Mineure Naturelle de '.$note.' : (Accords disponibles : '.printAccordsDisponibles($TNotesGamme).')</h3>';
 			printPiano($TGammeChromatique, false, $TNotesGamme);
 		}
 	}
@@ -107,6 +107,14 @@ function printPiano($TGammeChromatique, $get_form=false, $TGammeToCheck=array())
 	if($get_form) {
 		print '<br /><input type="SUBMIT" value="Chercher gammes" />';
 		print '</form>';
+	}
+}
+
+function printAccordsDisponibles($TGamme, $type="majeure") {
+	if($type == 'majeure') {
+		return $TGamme[0].'maj, '.$TGamme[1].'min, '.$TGamme[2].'min, '.$TGamme[3].'maj, '.$TGamme[4].'maj, '.$TGamme[5].'min';
+	} else {
+		print $TGamme[0].'min, '.$TGamme[2].'maj, '.$TGamme[3].'min, '.$TGamme[4].'min, '.$TGamme[5].'maj, '.$TGamme[6].'maj';
 	}
 }
 
